@@ -22,6 +22,24 @@ class Student:
             self.name, self.surname, sum(sum(x) for x in self.grades.values())/sum(len(x) for x in self.grades.values()),
         ','.join(self.courses_in_progress), ','.join(self.finished_courses))
 
+    def __lt__(self, other):
+        return sum([sum(x) for x in self.grades.values()]) < sum([sum(x) for x in other.grades.values()])
+
+    def __le__(self, other):
+        return sum([sum(x) for x in self.grades.values()]) <= sum([sum(x) for x in other.grades.values()])
+
+    def __gt__(self, other):
+        return sum([sum(x) for x in self.grades.values()]) > sum([sum(x) for x in other.grades.values()])
+
+    def __ge__(self, other):
+        return sum([sum(x) for x in self.grades.values()]) >= sum([sum(x) for x in other.grades.values()])
+
+    def __eq__(self, other):
+        return sum([sum(x) for x in self.grades.values()]) == sum([sum(x) for x in other.grades.values()])
+
+    def __ne__(self, other):
+        return sum([sum(x) for x in self.grades.values()]) != sum([sum(x) for x in other.grades.values()])
+
 
 
 class Mentor:
@@ -53,33 +71,34 @@ class Lector(Mentor):
         return 'Имя: {}\nФамилия: {}\nСредняя оценка за лекции: {}'.format(self.name, self.surname,
                                                                            sum(sum(x) for x in self.rates.values())/sum(len(x) for x in self.rates.values()))
 
-#Средняя оценка лекторов на курсе
-#Реализовал таким образом, что сначала суммируются средние оценки каждого лектора/студента,
-#а потом делятся на общее кол-во лекторов/студентов
-def avg_rate_lector(course, lectors_list):
-    avg = 0
-    for lector in lectors_list:
-        if isinstance(lector, Lector) and course in lector.rates:
-            avg += sum(lector.rates[course]) / len(lector.rates[course])
-    return avg / len(lectors_list)
+    def __lt__(self, other):
+        return sum([sum(x) for x in self.rates.values()]) < sum([sum(x) for x in other.rates.values()])
 
-#Средняя оценка студентов на курсе
-def avg_rate_students(course, students_list):
-    avg = 0
-    for student in students_list:
-        if isinstance(student, Student) and course in student.grades:
-            avg += sum(student.grades[course]) / len(student.grades[course])
-    return avg / len(students_list)
+    def __le__(self, other):
+        return sum([sum(x) for x in self.rates.values()]) <= sum([sum(x) for x in other.rates.values()])
+
+    def __gt__(self, other):
+        return sum([sum(x) for x in self.rates.values()]) > sum([sum(x) for x in other.rates.values()])
+
+    def __ge__(self, other):
+        return sum([sum(x) for x in self.rates.values()]) >= sum([sum(x) for x in other.rates.values()])
+
+    def __eq__(self, other):
+        return sum([sum(x) for x in self.rates.values()]) == sum([sum(x) for x in other.rates.values()])
+
+    def __ne__(self, other):
+        return sum([sum(x) for x in self.rates.values()]) != sum([sum(x) for x in other.rates.values()])
+
 
 #Создаем 2 студентов
 best_student = Student('Ruoy', 'Eman', 'man')
-best_student.courses_in_progress += ['Python']
+best_student.courses_in_progress += ['Python', 'Java']
 normal_student = Student('John', 'Cena', 'man')
-normal_student.courses_in_progress += ['Python']
+normal_student.courses_in_progress += ['Python', 'Java']
 
 #Создаем 2 лекторов
 cool_lector = Lector('Some', 'Buddy')
-cool_lector.courses_attached += ['Python']
+cool_lector.courses_attached += ['Python', 'Java']
 cool_lector2 = Lector('Some2', 'Buddy2')
 cool_lector2.courses_attached += ['Python', 'Java']
 
@@ -90,18 +109,28 @@ cool_reviewer.courses_attached += ['Python', 'Java']
 #Ставим оценки 2 студентам
 cool_reviewer.rate_hw(best_student, 'Python', 8)
 cool_reviewer.rate_hw(best_student, 'Python', 10)
+cool_reviewer.rate_hw(best_student, 'Java', 10)
 cool_reviewer.rate_hw(normal_student, 'Python', 7)
 cool_reviewer.rate_hw(normal_student, 'Python', 8)
+cool_reviewer.rate_hw(normal_student, 'Java', 8)
 
 #Ставим оценки лекторам (все происходит на курсе Python)
-best_student.rate_lection(cool_lector, 10, 'Python')
-best_student.rate_lection(cool_lector, 10, 'Python')
-normal_student.rate_lection(cool_lector, 10, 'Python')
-normal_student.rate_lection(cool_lector2, 10, 'Python')
+best_student.rate_lection(cool_lector, 9, 'Python')
+best_student.rate_lection(cool_lector, 9, 'Python')
+normal_student.rate_lection(cool_lector, 7, 'Java')
+best_student.rate_lection(cool_lector, 7, 'Java')
+normal_student.rate_lection(cool_lector2, 10, 'Java')
+best_student.rate_lection(cool_lector2, 9, 'Python')
 
+#ПЕРЕГРУЗКА __STR__
 print(cool_reviewer, end='\n\n')
 print(cool_lector, end='\n\n')
 print(best_student, end='\n\n')
 print()
-print(f'Средняя оценка лекторов на к. Python {avg_rate_lector("Python", [cool_lector, cool_lector2])}', end='\n\n')
-print(f'Средняя оценка студентов на к. Python {avg_rate_students("Python", [best_student, normal_student])}', end='\n\n')
+
+#ПЕРЕГРУЗКА СРАВНЕНИЙ
+print(cool_lector > cool_lector2, end='\n\n')
+print(cool_lector <= cool_lector2, end='\n\n')
+print(best_student == normal_student, end='\n\n')
+print(best_student >= normal_student, end='\n\n')
+print()
